@@ -21,7 +21,7 @@
             <div class="card form-card">
                 <form th:action="@{/projects/add}" method="post" th:object="${projectRequest}">
                     <!-- Hidden userId from logged-in admin -->
-                    <input type="hidden" th:field="*{userId}" th:value="${loggedUserId}"/>
+                    <input type="hidden" name="userId" th:value="${loggedUserId}" />
 
                     <div class="form-group">
                         <label class="form-label">Project Name</label>
@@ -56,5 +56,20 @@
         </div>
     </div>
 </div>
+<script>
+const toggle = document.querySelector('.menu-toggle');
+const sidebar = document.querySelector('.sidebar');
+const overlay = document.querySelector('.sidebar-overlay');
+
+toggle?.addEventListener('click', () => {
+    sidebar.classList.toggle('open');
+    overlay.classList.toggle('active');
+});
+
+overlay?.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('active');
+});
+</script>
 </body>
 </html>
