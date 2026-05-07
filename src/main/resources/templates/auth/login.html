@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Login | TaskManager</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="auth-logo">
+            <div class="logo-mark">✦</div>
+            <h1>Welcome Back</h1>
+            <p>Sign in to your TaskManager account</p>
+        </div>
+
+        <!-- Alerts -->
+        <div th:if="${error}" class="alert alert-error">⚠ <span th:text="${error}"></span></div>
+        <div th:if="${message}" class="alert alert-success">✓ <span th:text="${message}"></span></div>
+        <div th:if="${success}" class="alert alert-success">✓ <span th:text="${success}"></span></div>
+
+        <form th:action="@{/auth/login}" method="post">
+            <div class="form-group">
+                <label class="form-label">Email Address</label>
+                <input type="email" name="username" class="form-control" placeholder="admin@gmail.com" required/>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" name="password" class="form-control" placeholder="••••••••" required/>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; padding:12px;">
+                Sign In →
+            </button>
+        </form>
+
+        <p style="text-align:center; margin-top:20px; font-size:0.85rem; color:var(--text-muted);">
+            No account? <a th:href="@{/auth/signup}">Create one</a>
+        </p>
+
+        <div style="margin-top:24px; padding:12px; background:var(--surface2); border-radius:8px; font-size:0.8rem; color:var(--text-muted); font-family:'DM Mono',monospace;">
+            Default Admin → admin@gmail.com / 1234
+        </div>
+    </div>
+</div>
+</body>
+</html>

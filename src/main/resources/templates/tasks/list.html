@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Tasks')}"></head>
+<body>
+<div class="app-wrapper">
+    <div th:replace="~{fragments/layout :: sidebar}" th:with="activePage='tasks'"></div>
+
+    <div class="main-content">
+        <div class="topbar">
+            <div>
+                <div class="page-title">Tasks</div>
+                <div class="page-subtitle">Manage and track all tasks</div>
+            </div>
+            <a sec:authorize="hasRole('ADMIN')" th:href="@{/tasks/create}" class="btn btn-primary">
+                ＋ New Task
+            </a>
+        </div>
+
+        <div class="content-area">
+            <div th:if="${success}" class="alert alert-success">✓ <span th:text="${success}"></span></div>
+            <div th:if="${error}" class="alert alert-error">⚠ <span th:text="${error}"></span></div>
+
+            <div class="card">
+                <div class="table-wrapper" th:if="${!tasks.isEmpty()}">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Title</th>
+                                <th>Project</th>
+                                <th>Assigned To</th>
+                                <th>Status</th>
+                                <th>Due Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="task : ${tasks}">
+                                <td th:text="${task.id}" style="color:var(--text-muted); font-family:'DM Mono',monospace; font-size:0.8rem;">#1</td>
+                                <td>
+                                    <div style="font-weight:600;" th:text="${task.title}">Task</div>
+                                    <div style="font-size:0.78rem; color:var(--text-muted);" th:text="${task.description}">Desc</div>
+                                </td>
+                                <td>
+                                    <a th:href="@{/projects/{id}(id=${task.project.id})}" style="color:var(--text-muted); font-size:0.85rem;" th:text="${task.project.name}">Project</a>
+                                </td>
+                                <td>
+                                    <div style="display:flex; align-items:center; gap:8px;">
+                                        <div class="user-avatar" style="width:26px; height:26px; font-size:0.7rem;"
+                                             th:text="${#strings.substring(task.assignedTo.name, 0, 1).toUpperCase()}">A</div>
+                                        <span style="font-size:0.85rem;" th:text="${task.assignedTo.name}">User</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <!-- Quick status update form -->
+                                    <form th:action="@{/tasks/status/{id}(id=${task.id})}" method="post" class="status-form">
+                                        <select name="status" class="status-select" onchange="this.form.submit()">
+                                            <option value="TODO" th:selected="${task.status.name() == 'TODO'}">TODO</option>
+                                            <option value="IN_PROGRESS" th:selected="${task.status.name() == 'IN_PROGRESS'}">IN PROGRESS</option>
+                                            <option value="DONE" th:selected="${task.status.name() == 'DONE'}">DONE</option>
+                                        </select>
+                                    </form>
+                                </td>
+                                <td th:text="${task.dueDate}" style="font-family:'DM Mono',monospace; font-size:0.82rem; color:var(--text-muted);">-</td>
+                                <td>
+                                    <div style="display:flex; gap:6px;">
+                                        <a sec:authorize="hasRole('ADMIN')" th:href="@{/tasks/edit/{id}(id=${task.id})}" class="btn btn-outline btn-sm">Edit</a>
+                                        <form sec:authorize="hasRole('ADMIN')" th:action="@{/tasks/delete/{id}(id=${task.id})}" method="post" style="display:inline;" onsubmit="return confirm('Delete this task?')">
+                                            <button type="submit" class="btn btn-danger btn-sm">Del</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div th:if="${tasks.isEmpty()}" class="empty-state">
+                    <div class="empty-icon">◻</div>
+                    <p>No tasks yet. Create one to get started!</p>
+                    <br/>
+                    <a sec:authorize="hasRole('ADMIN')" th:href="@{/tasks/create}" class="btn btn-primary">＋ Create Task</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

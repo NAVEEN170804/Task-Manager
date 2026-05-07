@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Create Project')}"></head>
+<body>
+<div class="app-wrapper">
+    <div th:replace="~{fragments/layout :: sidebar}" th:with="activePage='projects'"></div>
+
+    <div class="main-content">
+        <div class="topbar">
+            <div>
+                <div class="page-title">Create Project</div>
+                <div class="page-subtitle">Fill in the details to create a new project</div>
+            </div>
+            <a th:href="@{/projects}" class="btn btn-outline">← Back</a>
+        </div>
+
+        <div class="content-area">
+            <div th:if="${error}" class="alert alert-error">⚠ <span th:text="${error}"></span></div>
+
+            <div class="card form-card">
+                <form th:action="@{/projects/add}" method="post" th:object="${projectRequest}">
+                    <!-- Hidden userId from logged-in admin -->
+                    <input type="hidden" th:field="*{userId}" th:value="${loggedUserId}"/>
+
+                    <div class="form-group">
+                        <label class="form-label">Project Name</label>
+                        <input type="text" th:field="*{name}" class="form-control" placeholder="e.g. Website Redesign" required/>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <textarea th:field="*{description}" class="form-control" placeholder="What is this project about?"></textarea>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                        <div class="form-group">
+                            <label class="form-label">Due Date</label>
+                            <input type="date" th:field="*{dueDate}" class="form-control" required/>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Priority</label>
+                            <select th:field="*{priority}" class="form-control" required>
+                                <option value="">-- Select Priority --</option>
+                                <option th:each="p : ${priorities}" th:value="${p}" th:text="${p}">Priority</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Create Project →</button>
+                        <a th:href="@{/projects}" class="btn btn-outline">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

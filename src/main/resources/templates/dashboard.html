@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Dashboard')}"></head>
+<body>
+<div class="app-wrapper">
+    <div th:replace="~{fragments/layout :: sidebar}"></div>
+
+    <div class="main-content">
+        <div class="topbar">
+            <div>
+                <div class="page-title">Dashboard</div>
+                <div class="page-subtitle">Welcome back, <span sec:authentication="name">User</span>!</div>
+            </div>
+        </div>
+
+        <div class="content-area">
+            <!-- Flash messages -->
+            <div th:if="${success}" class="alert alert-success">✓ <span th:text="${success}"></span></div>
+            <div th:if="${error}" class="alert alert-error">⚠ <span th:text="${error}"></span></div>
+
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card blue">
+                    <div class="stat-icon">◈</div>
+                    <div class="stat-number" th:text="${totalProjects}">0</div>
+                    <div class="stat-label">Total Projects</div>
+                </div>
+                <div class="stat-card pink">
+                    <div class="stat-icon">◻</div>
+                    <div class="stat-number" th:text="${totalTasks}">0</div>
+                    <div class="stat-label">Total Tasks</div>
+                </div>
+                <div class="stat-card green">
+                    <div class="stat-icon">◎</div>
+                    <div class="stat-number" th:text="${totalUsers}">0</div>
+                    <div class="stat-label">Team Members</div>
+                </div>
+                <div class="stat-card yellow">
+                    <div class="stat-icon">✦</div>
+                    <div class="stat-number" th:text="${myTasks.size()}">0</div>
+                    <div class="stat-label">My Tasks</div>
+                </div>
+            </div>
+
+            <!-- Dashboard Grid -->
+            <div class="dashboard-grid">
+                <!-- My Tasks -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">My Tasks</h2>
+                        <a th:href="@{/tasks}" class="btn btn-outline btn-sm">View All</a>
+                    </div>
+                    <div class="table-wrapper">
+                        <table th:if="${!myTasks.isEmpty()}">
+                            <thead>
+                                <tr>
+                                    <th>Task</th>
+                                    <th>Project</th>
+                                    <th>Status</th>
+                                    <th>Due</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="task : ${myTasks}">
+                                    <td th:text="${task.title}">Task</td>
+                                    <td th:text="${task.project.name}">Project</td>
+                                    <td>
+                                        <span th:classappend="${task.status.name() == 'TODO'} ? 'badge-todo' : (${task.status.name() == 'IN_PROGRESS'} ? 'badge-progress' : 'badge-done')"
+                                              class="badge" th:text="${task.status}">TODO</span>
+                                    </td>
+                                    <td th:text="${task.dueDate}">-</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div th:if="${myTasks.isEmpty()}" class="empty-state">
+                            <div class="empty-icon">◻</div>
+                            <p>No tasks assigned to you yet.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Projects -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Projects</h2>
+                        <a th:href="@{/projects}" class="btn btn-outline btn-sm">All</a>
+                    </div>
+                    <div th:if="${!recentProjects.isEmpty()}">
+                        <div th:each="proj : ${recentProjects}" style="padding:12px 0; border-bottom:1px solid var(--border);">
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <div>
+                                    <a th:href="@{/projects/{id}(id=${proj.id})}" style="font-weight:600; color:var(--text);" th:text="${proj.name}">Project</a>
+                                    <div style="font-size:0.78rem; color:var(--text-muted); margin-top:2px;" th:text="${proj.dueDate}">Date</div>
+                                </div>
+                                <span th:classappend="${proj.priority.name() == 'LOW'} ? 'badge-low' : (${proj.priority.name() == 'MEDIUM'} ? 'badge-medium' : 'badge-high')"
+                                      class="badge" th:text="${proj.priority}">LOW</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div th:if="${recentProjects.isEmpty()}" class="empty-state">
+                        <div class="empty-icon">◈</div>
+                        <p>No projects yet.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

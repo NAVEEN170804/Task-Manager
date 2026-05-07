@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Projects')}"></head>
+<body>
+<div class="app-wrapper">
+    <div th:replace="~{fragments/layout :: sidebar}" th:with="activePage='projects'"></div>
+
+    <div class="main-content">
+        <div class="topbar">
+            <div>
+                <div class="page-title">Projects</div>
+                <div class="page-subtitle">All your team projects in one place</div>
+            </div>
+            <a sec:authorize="hasRole('ADMIN')" th:href="@{/projects/add}" class="btn btn-primary">
+                ＋ New Project
+            </a>
+        </div>
+
+        <div class="content-area">
+            <div th:if="${success}" class="alert alert-success">✓ <span th:text="${success}"></span></div>
+            <div th:if="${error}" class="alert alert-error">⚠ <span th:text="${error}"></span></div>
+
+            <div class="card">
+                <div class="table-wrapper" th:if="${!projects.isEmpty()}">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Project Name</th>
+                                <th>Description</th>
+                                <th>Priority</th>
+                                <th>Due Date</th>
+                                <th>Members</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="project : ${projects}">
+                                <td th:text="${project.id}" style="color:var(--text-muted); font-family:'DM Mono',monospace; font-size:0.8rem;">#1</td>
+                                <td>
+                                    <a th:href="@{/projects/{id}(id=${project.id})}" style="color:var(--text); font-weight:600;" th:text="${project.name}">Project</a>
+                                </td>
+                                <td style="color:var(--text-muted); font-size:0.85rem; max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" th:text="${project.description}">Desc</td>
+                                <td>
+                                    <span th:classappend="${project.priority.name() == 'LOW'} ? 'badge-low' : (${project.priority.name() == 'MEDIUM'} ? 'badge-medium' : 'badge-high')"
+                                          class="badge" th:text="${project.priority}">LOW</span>
+                                </td>
+                                <td th:text="${project.dueDate}" style="font-family:'DM Mono',monospace; font-size:0.82rem; color:var(--text-muted);">-</td>
+                                <td th:text="${project.members.size()}" style="font-family:'DM Mono',monospace;">0</td>
+                                <td>
+                                    <div style="display:flex; gap:8px;">
+                                        <a th:href="@{/projects/{id}(id=${project.id})}" class="btn btn-outline btn-sm">View</a>
+                                        <a sec:authorize="hasRole('ADMIN')" th:href="@{/projects/edit/{id}(id=${project.id})}" class="btn btn-outline btn-sm">Edit</a>
+                                        <form sec:authorize="hasRole('ADMIN')" th:action="@{/projects/delete/{id}(id=${project.id})}" method="post" style="display:inline;" onsubmit="return confirm('Delete this project?')">
+                                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div th:if="${projects.isEmpty()}" class="empty-state">
+                    <div class="empty-icon">◈</div>
+                    <p>No projects yet. Create one to get started!</p>
+                    <br/>
+                    <a sec:authorize="hasRole('ADMIN')" th:href="@{/projects/add}" class="btn btn-primary">＋ Create Project</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

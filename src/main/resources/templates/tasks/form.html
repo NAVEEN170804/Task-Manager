@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Create Task')}"></head>
+<body>
+<div class="app-wrapper">
+    <div th:replace="~{fragments/layout :: sidebar}" th:with="activePage='tasks'"></div>
+
+    <div class="main-content">
+        <div class="topbar">
+            <div>
+                <div class="page-title">Create Task</div>
+                <div class="page-subtitle">Assign a task to a team member</div>
+            </div>
+            <a th:href="@{/tasks}" class="btn btn-outline">← Back</a>
+        </div>
+
+        <div class="content-area">
+            <div th:if="${error}" class="alert alert-error">⚠ <span th:text="${error}"></span></div>
+
+            <div class="card form-card">
+                <form th:action="@{/tasks/create}" method="post" th:object="${taskRequest}">
+                    <div class="form-group">
+                        <label class="form-label">Task Title</label>
+                        <input type="text" th:field="*{title}" class="form-control" placeholder="e.g. Design homepage mockup" required/>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <textarea th:field="*{description}" class="form-control" placeholder="Task details..."></textarea>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                        <div class="form-group">
+                            <label class="form-label">Project</label>
+                            <select th:field="*{projectId}" class="form-control" required>
+                                <option value="">-- Select Project --</option>
+                                <option th:each="proj : ${projects}" th:value="${proj.id}" th:text="${proj.name}">Project</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Assign To</label>
+                            <select th:field="*{userId}" class="form-control" required>
+                                <option value="">-- Select Member --</option>
+                                <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.name}">User</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                        <div class="form-group">
+                            <label class="form-label">Due Date</label>
+                            <input type="date" th:field="*{dueDate}" class="form-control" required/>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Status</label>
+                            <select th:field="*{status}" class="form-control" required>
+                                <option value="">-- Select Status --</option>
+                                <option th:each="s : ${statuses}" th:value="${s}" th:text="${s}">Status</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Create Task →</button>
+                        <a th:href="@{/tasks}" class="btn btn-outline">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
