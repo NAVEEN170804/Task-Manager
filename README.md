@@ -6,6 +6,11 @@ This system includes secure authentication, project management, task tracking, d
 
 ---
 
+## 🌐 Live Demo
+
+[![Live Demo](https://img.shields.io/badge/Live%20Project-Click%20Here-brightgreen)](https://task-manager-production-8ca9.up.railway.app)
+
+---
 ## 🚀 Features
 
 ### 🔐 Authentication & Authorization
